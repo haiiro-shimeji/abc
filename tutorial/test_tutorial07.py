@@ -167,6 +167,40 @@ class CTest(unittest.TestCase):
             [1, 0],
             False
         ),
+        (
+            "Case3",
+            _createModel([
+                [9, 4],
+                [4, 3],
+                [1, 1],
+                [4, 2],
+                [2, 4],
+                [5, 8],
+                [4, 0],
+                [5, 3],
+                [0, 5],
+                [5, 2],
+            ]),
+            [-1, 0],
+            False
+        ),
+        (
+            "Case4",
+            _createModel([
+                [9, 4],
+                [4, 3],
+                [1, 1],
+                [4, 2],
+                [2, 4],
+                [5, 8],
+                [4, 0],
+                [5, 3],
+                [0, 5],
+                [5, 2],
+            ]),
+            [1, 1],
+            True
+        ),
     ])
     def test_inModel(self, _, _m, _p, expected):
         self.assertEqual(_inModel(_m, _p), expected)
@@ -185,18 +219,55 @@ class CTest(unittest.TestCase):
         _createFixture(5000, 500),
         _createFixture(5000, 3000),
     ])
-    def test_main_inModel_performance(self, _, __, _m):
+    def test_main_inModel_performance(self, _, _n, _m):
         model = _createModel(_m)
-        for i in range(0, 3000):
-            self.assertEqual([1, 1] in _m, _inModel(model, [1, 1]))
+        self.assertEqual(False, _inModel(model, [-1, -1]))
+        self.assertEqual(False, _inModel(model, [5001, 5001]))
+        self.assertEqual(False, _inModel(model, [_m[0][0], -1]))
+        self.assertEqual(False, _inModel(model, [_m[0][0], 5001]))
+        for i in range(0, _n):
+            expected = _m[i] in _m
+            self.assertEqual(_inModel(model, _m[i]), expected)
 
-    """
     @parameterized.expand([
-        _createFixture(5000, 100),
-        _createFixture(5000, 500),
+        _createFixture(5000, 30),
+        #_createFixture(5000, 500),
         #_createFixture(5000, 3000),
     ])
     def test_main_test_performance(self, _, _n, _m):
-        main(_n, _m)
+        print(main(_n, _m))
         self.assertTrue(True)
+    """
+    def test(self):
+        self.assertTrue((7180, 3186) in (
+            (2928,  106),
+            (1988, 4711),
+            (2539,  663),
+            (2349, 3468),
+            (3469, 4663),
+            (1031, 2990),
+            (  75, 3285),
+            ( 263, 2996),
+            (3030, 1855),
+            (1234, 3772),
+            (3514, 3772),
+            ( 334, 2046),
+            (4807, 2836),
+            (  74, 2600),
+            ( 611, 4610),
+            (2971,  138),
+            (3708, 1576),
+            (3828, 4634),
+            (4311, 4484),
+            (4229, 1975),
+            (4967, 4621),
+            (4105, 3254),
+            (4769, 1718),
+            ( 918, 2135),
+            (2143, 4481),
+            (4758, 1521),
+            (2564, 1079),
+            (1924,  171),
+            (3759, 3186),
+            (3747,  715)))
     """

@@ -26,25 +26,31 @@ def _createModel(M):
     model1 = dict()
     for i in range(0, len(M)):
         if M[i][0] not in model1.keys():
-            model1[M[i][0]] = []
-
-        model1[M[i][0]].append(M[i][1])
+            model1[M[i][0]] = [M[i][1]]
+        else:
+            model1[M[i][0]].append(M[i][1])
 
     model2 = sorted([(k, sorted(model1[k])) for k in model1.keys()], key=lambda _t: _t[0])
 
     return ([_t[0] for _t in model2], [_t[1] for _t in model2])
 
-def _inModel(model, p):
-    keys, m = model
+def _inModel(model, p, d=False):
+    xset, ysetArray = model
 
-    i = bisect_left(keys, p[0])
+    i = bisect_left(xset, p[0])
 
-    if i >= len(keys) or keys[i] != p[0]:
+    if d:
+        print(p[0], xset, i)
+
+    if i >= len(xset) or xset[i] != p[0]:
         return False
 
-    j = bisect_left(m[i], p[1])
+    j = bisect_left(ysetArray[i], p[1])
 
-    return j < len(m[i]) and m[i][j] == p[1]
+    if d:
+        print(p[1], ysetArray[i], j)
+
+    return j < len(ysetArray[i]) and ysetArray[i][j] == p[1]
 
 def main(N, M):
     """ main
@@ -52,8 +58,6 @@ def main(N, M):
     model = _createModel(M)
 
     bestScore = 0
-
-    count = 0
 
     for i in range(0, len(M)):
         for j in range(i+1, len(M)):
@@ -66,12 +70,9 @@ def main(N, M):
             p2 = [p1[0] - p0[1] + p1[1], p1[1] + p0[0] - p1[0]]
             p3 = [p2[0] - p1[1] + p2[1], p2[1] + p1[0] - p2[0]]
 
-            #if p2 in M and p3 in M:
-            if _inModel(model, p2) and _inModel(model, p3):
+            if 0 <= p2[0] and 5000 >= p2[0] and _inModel(model, p2) \
+                and 0 <= p3[0] and 5000 >= p3[0] and _inModel(model, p3):
                 bestScore = score
-                count += 1
-
-    print(count)
 
     return int(bestScore)
 
