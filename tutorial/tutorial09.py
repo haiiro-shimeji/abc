@@ -21,20 +21,32 @@ def readIntegerSet(n):
 def readIntegerMatrix(n, m):
     return reduce(lambda acc, _: acc + [readIntegerSet(m)], range(0, n), [])
 
-def main(N, X, M, A):
+def main(M, X, N, A):
     """ main
     """
-    for i in range(1, M):
-        x = X[0][0] - A[i][0]
-        y = X[0][1] - A[i][1]
+    Ax = {x:x for x, _ in A}
+    Ay = {y:y for _, y in A}
 
-        for j in range(1, N):
-            X[j][0] + x, X[j][1] + y
+    # X[0] が A[n] に一致すると仮定し、X[1:m] に相当する点が存在するかどうかを確認する.
+    # n x m x log(n) = 200000 x 3
+
+    for n in range(0, N):
+        x = A[n][0] - X[0][0]
+        y = A[n][1] - X[0][1]
+
+        result = True
+        for m in range(1, M):
+            if (X[m][0] + x) not in Ax or (X[m][1] + y) not in Ay:
+                result = False
+                break
+
+        if result:
+            return "{} {}".format(x, y)
 
 if __name__ == "__main__":
-    _N = readInteger()
-    _X = readIntegerMatrix(_N, 2)
     _M = readInteger()
-    _A = readIntegerMatrix(_M, 2)
+    _X = readIntegerMatrix(_M, 2)
+    _N = readInteger()
+    _A = readIntegerMatrix(_N, 2)
 
-    print(main(_N, _X, _M, _A))
+    print(main(_M, _X, _N, _A))
