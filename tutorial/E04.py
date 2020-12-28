@@ -72,9 +72,6 @@ def main(paths, rock):
             else:
                 route.append(route[-1])
                 route_.append(-1)
-            if route[i+1] == rock_route[i+1]:
-                logging.debug(CONV_T[c] + " cannot pass.")
-                break
             if route_[i] != -1 and route_[i] == rock_route_[i]:
                 logging.debug(CONV_T[c] + " cannot pass.")
                 break
