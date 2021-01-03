@@ -32,15 +32,52 @@ RANK = ['3','4','5','6','7','8','9','T','J','Q','K','A','2','o']
 def _calc_rank(field):
     n = len(field)
 
-    # jokerだけの場合はrank=15とする
+    # jokerだけの場合はrank=13とする
     if n == 1 and field[0] == 'Jo':
-        return (15, n)
+        return (13, n)
 
     # jocker除外
     field = [f for f in field if f != 'Jo']
 
     return (RANK.index(field[0][1]), n)
 
+def _availables(hands, field_rank, field_n):
+    # 手札をrankでグルーピング.
+    hands = dict([
+        (k, list(v))
+        for k, v in groupby(
+            sorted(hands, key=lambda c: RANK.index(c[1])),
+            key=lambda c: RANK.index(c[1])
+        )
+    ])
+
+    logging.debug(hands)
+
+    for rank in hands.keys():
+        if rank <= field_rank:
+            continue
+
+        cards = hands[rank] \
+            + (hands[13] if rank < 13 and field_n > 1 and 13 in hands.keys() else [])
+
+        if len(cards) < field_n:
+            continue
+
+        for _ret in _C(len(cards), field_n):
+            __ret = list(_ret)
+            logging.debug(__ret)
+            _cards = [cards[i-1] for i in __ret]
+            logging.debug(_cards)
+            yield _cards
+
+def _C(n, m):
+    if m == 1:
+        for i in range(n, 0, -1):
+            yield [i]
+    else:
+        for i in range(n, m-1, -1):
+            for c in _C(i-1, m-1):
+                yield [i] + c
 
 def _main(_S):
     field = _split_cards(_S.split(',')[0].rstrip())
@@ -52,12 +89,11 @@ def _main(_S):
     field_rank, field_n = _calc_rank(field)
     logging.debug([field_rank, field_n])
 
-    # 手札をrankでグルーピング.
-    hands = {k: v for h in hands}
+    # 出せる組み合わせを算出.
+    availables = list(_availables(hands, field_rank, field_n))
 
-    # 場のカードより弱いものを除外.
-
-    # ランクごとに出せる組み合わせを算出.
+    return ",".join(["".join(sorted(cards)) for cards in availables]) \
+        if len(availables) > 0 else '-'
 
 if __name__ == "__main__":
     print(_main(readString()))
