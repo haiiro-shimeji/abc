@@ -24,24 +24,22 @@ def readIntegerSet(n):
 def readIntegerMatrix(n, m):
     return reduce(lambda acc, _: acc + [readIntegerSet(m)], range(0, n), [])
 
-NODES = ['A', 'B', 'C', 'D', 'E', 'F']
-
 GRAPH = {
-    0: [3, 2, 1],
-    1: [0, 2, 4],
-    2: [0, 5, 1],
-    3: [4, 5, 0],
-    4: [5, 3, 1],
-    5: [3, 4, 2],
+    'A': ['D', 'C', 'B'],
+    'B': ['A', 'C', 'E'],
+    'C': ['A', 'F', 'B'],
+    'D': ['E', 'F', 'A'],
+    'E': ['F', 'D', 'B'],
+    'F': ['D', 'E', 'C'],
 }
 
 def _main(_S):
     cmds = list(_S.rstrip())
 
-    prev = 1
-    cur = 0
+    prev = 'B'
+    cur = 'A'
 
-    result = ['A']
+    result = [cur]
 
     for c in cmds:
         routes = GRAPH[cur]
@@ -55,7 +53,7 @@ def _main(_S):
         prev = cur
         cur = routes[to]
 
-        result.append(NODES[cur])
+        result.append(cur)
 
     return ''.join(result)
 
