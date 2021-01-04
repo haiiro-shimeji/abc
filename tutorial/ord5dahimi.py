@@ -54,21 +54,21 @@ def _availables(hands, field_rank, field_n):
     logging.debug(hands)
 
     for rank in hands.keys():
+        # 場のrankがrank以上であればスキップ.
         if rank <= field_rank:
             continue
 
+        # 場のカードが複数枚の場合、ジョーカーがあれば組み合わせ候補にジョーカーを加える.
         cards = hands[rank] \
             + (hands[13] if rank < 13 and field_n > 1 and 13 in hands.keys() else [])
 
+        # (ジョーカーを加えても)場の枚数に満たない場合はスキップ.
         if len(cards) < field_n:
             continue
 
+        # 出せる候補から場の枚数と同じ枚数を選ぶ組み合わせを算出し、返す.
         for _ret in _C(len(cards), field_n):
-            __ret = list(_ret)
-            logging.debug(__ret)
-            _cards = [cards[i-1] for i in __ret]
-            logging.debug(_cards)
-            yield _cards
+            yield [cards[i-1] for i in _ret]
 
 def _C(n, m):
     k = n
