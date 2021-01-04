@@ -71,13 +71,23 @@ def _availables(hands, field_rank, field_n):
             yield _cards
 
 def _C(n, m):
-    if m == 1:
-        for i in range(n, 0, -1):
-            yield [i]
-    else:
-        for i in range(n, m-1, -1):
-            for c in _C(i-1, m-1):
-                yield [i] + c
+    k = n
+    stack = [k]
+
+    while True:
+        if len(stack) < m:
+            while k-1 < 1:
+                if len(stack) < 1:
+                    return
+                j = stack.pop()
+                k = j
+
+            k -= 1
+            stack.append(k)
+
+        if len(stack) == m:
+            yield list(stack)
+            k = stack.pop()
 
 def _main(_S):
     field = _split_cards(_S.split(',')[0].rstrip())
